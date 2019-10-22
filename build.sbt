@@ -90,6 +90,7 @@ lazy val example1 = project
       "org.typelevel" %%% "discipline-scalatest" % "1.0.0-RC1" % Test
     )
   )
+  .settings(noPublishSettings)
   .dependsOn(goldenJVM % Test)
 
 lazy val publishSettings = Seq(
