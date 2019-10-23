@@ -61,7 +61,7 @@ This will verify that our JSON codec round-trips values, has consistent error-ac
 fail-fast modes, etc. Which is great! Except that if we make a small change to our case class…
 
 ```scala
-case class Visit(id: String, page: String, date: Instant)
+case class Visit(id: Long, page: String, date: Instant)
 ```
 
 …then our tests will continue to pass, but we won't be able to decode any of the JSON we could previously
