@@ -25,7 +25,7 @@ And we're decoding it into a Scala case class using Circe:
 import io.circe.generic.semiauto.deriveCodec
 import java.time.Instant
 
-case class Visit(id: String, page: String, ts: Instant)
+case class Visit(id: Long, page: String, ts: Instant)
 
 object Visit {
   implicit val codecForVisit: Codec[Visit] = deriveCodec
