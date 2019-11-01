@@ -82,7 +82,7 @@ class VisitSuite extends AnyFlatSpec with Discipline with VisitTestInstances {
   }
 
   it should "produce the expected results" in {
-  	import io.circe.syntax._
+    import io.circe.syntax._
     assert(value.asJson.noSpaces === good)
   }
 }
