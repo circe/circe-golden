@@ -14,7 +14,8 @@ import cats.kernel.Eq
 import io.circe.testing.{ ArbitraryInstances, CodecTests }
 import org.scalacheck.Arbitrary
 import org.scalatest.flatspec.AnyFlatSpec
-import org.typelevel.discipline.scalatest.Discipline
+import org.scalatest.prop.Configuration
+import org.typelevel.discipline.scalatest.FlatSpecDiscipline
 
 trait VisitTestInstances extends ArbitraryInstances {
   implicit val eqVisit: Eq[Visit] = Eq.fromUniversalEquals
@@ -27,7 +28,7 @@ trait VisitTestInstances extends ArbitraryInstances {
   )
 }
 
-class OldVisitSuite extends AnyFlatSpec with Discipline with VisitTestInstances {
+class OldVisitSuite extends AnyFlatSpec with FlatSpecDiscipline with Configuration with VisitTestInstances {
   checkAll("Codec[Visit]", CodecTests[Visit].codec)
 
   val good = """{"id":12345,"page":"/index.html","ts":"2019-10-22T14:54:13Z"}"""
@@ -45,6 +46,6 @@ class OldVisitSuite extends AnyFlatSpec with Discipline with VisitTestInstances 
 
 import io.circe.testing.golden.GoldenCodecTests
 
-class VisitSuite extends AnyFlatSpec with Discipline with VisitTestInstances {
+class VisitSuite extends AnyFlatSpec with FlatSpecDiscipline with Configuration with VisitTestInstances {
   checkAll("GoldenCodec[Visit]", GoldenCodecTests[Visit].goldenCodec)
 }
