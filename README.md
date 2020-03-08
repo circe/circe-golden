@@ -104,7 +104,7 @@ noise and maintenance. The usage looks like this:
 ```scala
 import io.circe.testing.golden.GoldenCodecTests
 
-class VisitSuite extends AnyFlatSpec with Discipline with VisitTestInstances {
+class VisitSuite extends AnyFlatSpec with FlatSpecDiscipline with VisitTestInstances with Configuration {
   checkAll("GoldenCodec[Visit]", GoldenCodecTests[Visit].goldenCodec)
 }
 ```
