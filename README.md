@@ -22,6 +22,7 @@ For example, suppose we're working with some JSON like this:
 And we're decoding it into a Scala case class using Circe:
 
 ```scala
+import io.circe.Codec
 import io.circe.generic.semiauto.deriveCodec
 import java.time.Instant
 
@@ -40,6 +41,7 @@ import io.circe.testing.{ArbitraryInstances, CodecTests}
 import org.scalacheck.Arbitrary
 import org.scalatest.flatspec.AnyFlatSpec
 import org.typelevel.discipline.scalatest.Discipline
+import java.time.Instant
 
 trait VisitTestInstances extends ArbitraryInstances {
   implicit val eqVisit: Eq[Visit] = Eq.fromUniversalEquals
@@ -61,6 +63,8 @@ This will verify that our JSON codec round-trips values, has consistent error-ac
 fail-fast modes, etc. Which is great! Except that if we make a small change to our case class…
 
 ```scala
+import java.time.Instant
+
 case class Visit(id: Long, page: String, date: Instant)
 ```
 
@@ -71,7 +75,12 @@ made equivalent changes.
 We can fix this by adding some tests for specific examples:
 
 ```scala
-class VisitSuite extends AnyFlatSpec with Discipline with VisitTestInstances {
+import java.time.Instant
+import io.circe.testing.CodecTests
+import org.scalatest.flatspec.AnyFlatSpec
+import org.typelevel.discipline.scalatest.FlatSpecDiscipline
+
+class VisitSuite extends AnyFlatSpec with FlatSpecDiscipline with VisitTestInstances {
   checkAll("Codec[Visit]", CodecTests[Visit].codec)
 
   val good = """{"id":12345,"page":"/index.html","ts":"2019-10-22T14:54:13Z"}"""
@@ -103,8 +112,11 @@ noise and maintenance. The usage looks like this:
 
 ```scala
 import io.circe.testing.golden.GoldenCodecTests
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.prop.Configuration
+import org.typelevel.discipline.scalatest.FlatSpecDiscipline
 
-class VisitSuite extends AnyFlatSpec with Discipline with VisitTestInstances {
+class VisitSuite extends AnyFlatSpec with FlatSpecDiscipline with VisitTestInstances with Configuration {
   checkAll("GoldenCodec[Visit]", GoldenCodecTests[Visit].goldenCodec)
 }
 ```
