@@ -15,6 +15,7 @@ val compilerOptions = Seq(
 )
 
 val circeVersion = "0.13.0"
+val previousCirceGoldenVersion = "0.2.0"
 
 def priorTo2_13(scalaVersion: String): Boolean =
   CrossVersion.partialVersion(scalaVersion) match {
@@ -65,6 +66,7 @@ lazy val golden = crossProject(JSPlatform, JVMPlatform)
   .settings(allSettings)
   .settings(
     moduleName := "circe-golden",
+    mimaPreviousArtifacts := Set("io.circe" %% "circe-golden" % previousCirceGoldenVersion),
     libraryDependencies ++= Seq(
       "io.circe" %%% "circe-core" % circeVersion,
       "io.circe" %%% "circe-parser" % circeVersion,
@@ -100,9 +102,7 @@ lazy val publishSettings = Seq(
   licenses := Seq("Apache 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
   publishMavenStyle := true,
   publishArtifact in Test := false,
-  pomIncludeRepository := { _ =>
-    false
-  },
+  pomIncludeRepository := { _ => false },
   publishTo := {
     val nexus = "https://oss.sonatype.org/"
     if (isSnapshot.value)
