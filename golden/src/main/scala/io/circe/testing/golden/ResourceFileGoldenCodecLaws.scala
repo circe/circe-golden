@@ -86,8 +86,8 @@ object ResourceFileGoldenCodecLaws {
     }
 
   def apply[A](
-    count: Int,
-    size: Int
+    size: Int,
+    count: Int
   )(
     implicit decodeA: Decoder[A],
     encodeA: Encoder[A],
