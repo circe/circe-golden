@@ -22,13 +22,17 @@ abstract class ResourceFileGoldenCodecLaws[A](
   private[this] val resourceDir: File = resourcePackage.foldLeft(resourceRootDir) {
     case (acc, p) => new File(acc, p)
   }
-  private[this] val GoldenFilePattern: Regex = s"^$name-(.{44})\\.json$$".r
+  private[this] val GoldenFilePattern: Regex = "^-(.{44})\\.json$".r
 
   private[this] lazy val loadGoldenFiles: Try[List[(A, String)]] =
     Resources.open(resourceRootPath).flatMap { dirSource =>
       val files = dirSource.getLines.flatMap {
-        case name @ GoldenFilePattern(seed) => Some((seed, name))
-        case _                              => None
+        case fileName if fileName.startsWith(name) =>
+          fileName.drop(name.length) match {
+            case GoldenFilePattern(seed) => Some((seed, fileName))
+            case _                       => None
+          }
+        case _ => None
       }.toList.traverse[Try, (A, String)] {
         case (seed, name) =>
           val contents = Resources.open(resourceRootPath + name).map { source =>
@@ -64,9 +68,7 @@ abstract class ResourceFileGoldenCodecLaws[A](
     }
 
   protected lazy val goldenExamples: Try[List[(A, String)]] =
-    loadGoldenFiles.flatMap { fs =>
-      if (fs.isEmpty) generateGoldenFiles else loadGoldenFiles
-    }
+    loadGoldenFiles.flatMap(fs => if (fs.isEmpty) generateGoldenFiles else loadGoldenFiles)
 }
 
 object ResourceFileGoldenCodecLaws {
