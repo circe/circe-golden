@@ -2,7 +2,7 @@ package io.circe.testing.golden
 
 import java.io.File
 import scala.io.Source
-import scala.reflect.runtime.universe.TypeTag
+import scala.reflect.runtime.universe.{ Type, TypeTag }
 import scala.util.Try
 
 /**
@@ -36,8 +36,13 @@ object Resources {
   /**
    * Attempt to guess the name of the type indicated by the provided type tag.
    */
-  def inferName[A](implicit A: TypeTag[A]): String =
-    A.tpe.typeSymbol.name.decodedName.toString
+  def inferName[A](implicit A: TypeTag[A]): String = inferNameForType(A.tpe)
+
+  private def inferNameForType(tpe: Type): String = {
+    val base = tpe.typeSymbol.name.decodedName.toString
+
+    (base :: tpe.typeArgs.map(inferNameForType)).mkString("_")
+  }
 
   def open(path: String): Try[Source] = Try(
     Source.fromInputStream(getClass.getResourceAsStream(path))
