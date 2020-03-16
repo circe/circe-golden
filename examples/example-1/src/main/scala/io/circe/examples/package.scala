@@ -89,3 +89,35 @@ object Foo {
     }
   }
 }
+
+case class MyList[A](value: List[A])
+
+object MyList {
+  import cats.kernel.instances.list._
+
+  implicit def eqMyList[A](implicit A: Eq[A]): Eq[MyList[A]] = Eq.by[MyList[A], List[A]](_.value)
+  implicit def arbitraryMyList[A](implicit A: Arbitrary[A]): Arbitrary[MyList[A]] =
+    Arbitrary(Arbitrary.arbitrary[List[A]].map(as => MyList(as.take(2))))
+
+  implicit def encodeMyList[A](implicit A: Encoder[A]): Encoder[MyList[A]] =
+    Encoder[List[A]].contramap(_.value)
+
+  implicit def decodeMyList[A](implicit A: Decoder[A]): Decoder[MyList[A]] =
+    Decoder[List[A]].map(MyList(_))
+}
+
+case class MyTuple[A, B](value: (A, B))
+
+object MyTuple {
+  import cats.kernel.instances.tuple._
+
+  implicit def eqMyTuple[A, B](implicit A: Eq[A], B: Eq[B]): Eq[MyTuple[A, B]] = Eq.by[MyTuple[A, B], (A, B)](_.value)
+  implicit def arbitraryMyTuple[A, B](implicit A: Arbitrary[A], B: Arbitrary[B]): Arbitrary[MyTuple[A, B]] =
+    Arbitrary(Arbitrary.arbitrary[(A, B)].map(MyTuple(_)))
+
+  implicit def encodeMyTuple[A, B](implicit A: Encoder[A], B: Encoder[B]): Encoder[MyTuple[A, B]] =
+    Encoder[(A, B)].contramap(_.value)
+
+  implicit def decodeMyTuple[A, B](implicit A: Decoder[A], B: Decoder[B]): Decoder[MyTuple[A, B]] =
+    Decoder[(A, B)].map(MyTuple(_))
+}
