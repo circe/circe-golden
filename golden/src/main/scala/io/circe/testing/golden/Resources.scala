@@ -17,7 +17,7 @@ object Resources {
   lazy val inferRootDir: File = {
     var current = new File(getClass.getResource("/").toURI)
 
-    while (current.getName != "target" && current.ne(null)) {
+    while (current.ne(null) && current.getName != "target") {
       current = current.getParentFile
     }
 
