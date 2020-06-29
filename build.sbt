@@ -1,6 +1,8 @@
-import sbtcrossproject.{ CrossType, crossProject }
+import sbtcrossproject.{CrossType, crossProject}
 
 organization in ThisBuild := "io.circe"
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
 
 val compilerOptions = Seq(
   "-deprecation",
@@ -20,7 +22,7 @@ val previousCirceGoldenVersion = "0.2.0"
 def priorTo2_13(scalaVersion: String): Boolean =
   CrossVersion.partialVersion(scalaVersion) match {
     case Some((2, minor)) if minor < 13 => true
-    case _                              => false
+    case _ => false
   }
 
 val baseSettings = Seq(
@@ -37,11 +39,11 @@ val baseSettings = Seq(
       Seq(
         "-Ywarn-unused:imports"
       )
-  ),
-  scalacOptions in (Compile, console) ~= {
+    ),
+  scalacOptions in(Compile, console) ~= {
     _.filterNot(Set("-Ywarn-unused-import", "-Ywarn-unused:imports"))
   },
-  scalacOptions in (Test, console) ~= {
+  scalacOptions in(Test, console) ~= {
     _.filterNot(Set("-Ywarn-unused-import", "-Ywarn-unused:imports"))
   },
   coverageHighlighting := true,
@@ -59,6 +61,7 @@ val root = project
   .aggregate(goldenJVM, example1)
   .dependsOn(goldenJVM)
 
+
 lazy val golden = crossProject(JSPlatform, JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .crossType(CrossType.Pure)
@@ -67,17 +70,19 @@ lazy val golden = crossProject(JSPlatform, JVMPlatform)
   .settings(
     moduleName := "circe-golden",
     mimaPreviousArtifacts := Set("io.circe" %% "circe-golden" % previousCirceGoldenVersion),
+    resolvers += Resolver.bintrayRepo("writethemfirst", "maven"),
     libraryDependencies ++= Seq(
       "io.circe" %%% "circe-core" % circeVersion,
       "io.circe" %%% "circe-parser" % circeVersion,
       "io.circe" %%% "circe-testing" % circeVersion,
+      "com.github.writethemfirst" %%% "approvals-scala" % "1.1.0",
       "io.circe" %%% "circe-generic" % circeVersion % Test,
       "org.typelevel" %%% "discipline-scalatest" % "1.0.1" % Test,
       scalaOrganization.value % "scala-reflect" % scalaVersion.value % Provided
     ),
     ghpagesNoJekyll := true,
     docMappingsApiDir := "api",
-    addMappingsToSiteDir(mappings in (Compile, packageDoc), docMappingsApiDir)
+    addMappingsToSiteDir(mappings in(Compile, packageDoc), docMappingsApiDir)
   )
 
 lazy val goldenJVM = golden.jvm
@@ -90,7 +95,8 @@ lazy val example1 = project
       "io.circe" %% "circe-core" % circeVersion,
       "org.scalacheck" %% "scalacheck" % "1.14.3",
       "org.typelevel" %%% "discipline-scalatest" % "1.0.1" % Test
-    )
+    ),
+    Test / fork := true
   )
   .settings(noPublishSettings)
   .dependsOn(goldenJVM % Test)
@@ -144,4 +150,4 @@ credentials ++= (
     username,
     password
   )
-).toSeq
+  ).toSeq
