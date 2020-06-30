@@ -75,7 +75,7 @@ lazy val golden = crossProject(JSPlatform, JVMPlatform)
       "io.circe" %%% "circe-core" % circeVersion,
       "io.circe" %%% "circe-parser" % circeVersion,
       "io.circe" %%% "circe-testing" % circeVersion,
-      "com.github.writethemfirst" %%% "approvals-scala" % "1.1.0",
+      "com.github.writethemfirst" %%% "approvals-scala" % "1.1.1",
       "io.circe" %%% "circe-generic" % circeVersion % Test,
       "org.typelevel" %%% "discipline-scalatest" % "1.0.1" % Test,
       scalaOrganization.value % "scala-reflect" % scalaVersion.value % Provided
