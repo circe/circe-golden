@@ -4,7 +4,7 @@ import cats.instances.string._
 import cats.kernel.Eq
 import cats.laws.IsEq
 import cats.laws.discipline.catsLawsIsEqToProp
-import io.circe.{ Decoder, Encoder, Json }
+import io.circe.{ Decoder, Encoder, Json, Printer }
 import io.circe.testing.CodecTests
 import org.scalacheck.{ Arbitrary, Prop, Shrink }
 import scala.reflect.runtime.universe.TypeTag
@@ -49,10 +49,16 @@ trait GoldenCodecTests[A] extends CodecTests[A] {
 
 object GoldenCodecTests {
   def apply[A: Decoder: Encoder: Arbitrary: TypeTag]: GoldenCodecTests[A] =
-    apply[A](ResourceFileGoldenCodecLaws[A])
+    apply[A](ResourceFileGoldenCodecLaws[A]())
+
+  def apply[A: Decoder: Encoder: Arbitrary: TypeTag](printer: Printer): GoldenCodecTests[A] =
+    apply[A](ResourceFileGoldenCodecLaws[A](printer = printer))
 
   def apply[A: Decoder: Encoder: Arbitrary: TypeTag](count: Int): GoldenCodecTests[A] =
-    apply[A](ResourceFileGoldenCodecLaws[A](count))
+    apply[A](ResourceFileGoldenCodecLaws[A](count = count))
+
+  def apply[A: Decoder: Encoder: Arbitrary: TypeTag](count: Int, printer: Printer): GoldenCodecTests[A] =
+    apply[A](ResourceFileGoldenCodecLaws[A](count = count, printer = printer))
 
   def apply[A: Decoder: Encoder: Arbitrary](laws0: GoldenCodecLaws[A]): GoldenCodecTests[A] =
     new GoldenCodecTests[A] {

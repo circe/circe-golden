@@ -3,19 +3,21 @@ package io.circe.testing.golden
 import cats.instances.list._, cats.instances.try_._
 import cats.syntax.traverse._
 import cats.laws._
-import io.circe.Json
+import io.circe.{ Json, Printer }
 import io.circe.testing.CodecLaws
 import scala.util.{ Failure, Success, Try }
 
 trait GoldenCodecLaws[A] extends CodecLaws[A] {
 
   /**
-   * Serialize a [[Json]] value as a string.
+   * Printer used to serialize a [[Json]] value as a string.
    *
    * We use `spaces2` by default because it provides useful diffs and human-readable examples, but
    * you can override if space or some other consideration is a priority.
    */
-  protected def printJson(value: Json): String = value.spaces2
+  protected def printer: Printer = Printer.spaces2
+
+  final protected def printJson(value: Json): String = printer.print(value)
 
   /**
    * A list of pairs of values and their JSON encodings serialized to strings (or an error).

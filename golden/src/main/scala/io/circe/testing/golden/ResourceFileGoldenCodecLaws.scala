@@ -2,7 +2,7 @@ package io.circe.testing.golden
 
 import cats.instances.list._, cats.instances.try_._
 import cats.syntax.apply._, cats.syntax.traverse._
-import io.circe.{ Decoder, Encoder }
+import io.circe.{ Decoder, Encoder, Printer }
 import java.io.{ File, PrintWriter }
 import org.scalacheck.{ Arbitrary, Gen }
 import scala.reflect.runtime.universe.TypeTag
@@ -13,8 +13,9 @@ abstract class ResourceFileGoldenCodecLaws[A](
   name: String,
   resourceRootDir: File,
   resourcePackage: List[String],
-  val size: Int = 100,
-  count: Int = 1
+  val size: Int,
+  count: Int,
+  override protected val printer: Printer
 ) extends GoldenCodecLaws[A]
     with ExampleGeneration[A] {
 
@@ -76,41 +77,25 @@ object ResourceFileGoldenCodecLaws {
     name: String,
     resourceRootDir: File,
     resourcePackage: List[String],
-    size: Int = 100,
-    count: Int = 1
+    size: Int,
+    count: Int,
+   printer: Printer
   )(implicit decodeA: Decoder[A], encodeA: Encoder[A], arbitraryA: Arbitrary[A]): GoldenCodecLaws[A] =
-    new ResourceFileGoldenCodecLaws[A](name, resourceRootDir, resourcePackage, size, count) {
+    new ResourceFileGoldenCodecLaws[A](name, resourceRootDir, resourcePackage, size, count, printer) {
       val decode: Decoder[A] = decodeA
       val encode: Encoder[A] = encodeA
       val gen: Gen[A] = arbitraryA.arbitrary
     }
 
   def apply[A](
-    size: Int,
-    count: Int
+    size: Int = 100,
+    count: Int = 1,
+    printer: Printer = Printer.spaces2
   )(
     implicit decodeA: Decoder[A],
     encodeA: Encoder[A],
     arbitraryA: Arbitrary[A],
     typeTagA: TypeTag[A]
   ): GoldenCodecLaws[A] =
-    apply[A](Resources.inferName[A], Resources.inferRootDir, Resources.inferPackage[A], size, count)
-
-  def apply[A](
-    count: Int
-  )(
-    implicit decodeA: Decoder[A],
-    encodeA: Encoder[A],
-    arbitraryA: Arbitrary[A],
-    typeTagA: TypeTag[A]
-  ): GoldenCodecLaws[A] =
-    apply[A](Resources.inferName[A], Resources.inferRootDir, Resources.inferPackage[A], count = count)
-
-  def apply[A](
-    implicit decodeA: Decoder[A],
-    encodeA: Encoder[A],
-    arbitraryA: Arbitrary[A],
-    typeTagA: TypeTag[A]
-  ): GoldenCodecLaws[A] =
-    apply[A](Resources.inferName[A], Resources.inferRootDir, Resources.inferPackage[A])
+    apply[A](Resources.inferName[A], Resources.inferRootDir, Resources.inferPackage[A], size, count, printer)
 }
