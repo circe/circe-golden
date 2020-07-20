@@ -2,7 +2,7 @@ package io.circe.testing.golden
 
 import java.io.File
 import scala.io.Source
-import scala.reflect.runtime.universe.{ Type, TypeTag }
+import scala.reflect.runtime.universe.{ Symbol, Type, TypeTag }
 import scala.util.Try
 
 /**
@@ -31,17 +31,23 @@ object Resources {
    * Attempt to guess the packaging of the type indicated by the provided type tag.
    */
   def inferPackage[A](implicit A: TypeTag[A]): List[String] =
-    A.tpe.typeSymbol.fullName.split('.').init.toList
+    owners(A.tpe).collectFirst { case s if s.isPackage => s.fullName.split('.').toList }.getOrElse(List.empty)
+
+  private def owners(tpe: Type): Iterator[Symbol] =
+    Iterator.iterate(tpe.typeSymbol)(_.owner)
 
   /**
    * Attempt to guess the name of the type indicated by the provided type tag.
    */
   def inferName[A](implicit A: TypeTag[A]): String = inferNameForType(A.tpe)
 
-  private def inferNameForType(tpe: Type): String = {
-    val base = tpe.typeSymbol.name.decodedName.toString
+  private def baseSymbols(tpe: Type): List[Symbol] =
+    owners(tpe).takeWhile(!_.isPackage).toList.reverse
 
-    (base :: tpe.typeArgs.map(inferNameForType)).mkString("_")
+  private def inferNameForType(tpe: Type): String = {
+    val baseNames = baseSymbols(tpe).map(_.name.decodedName.toString)
+
+    (baseNames ::: tpe.typeArgs.map(inferNameForType)).mkString("_")
   }
 
   def open(path: String): Try[Source] = Try(
