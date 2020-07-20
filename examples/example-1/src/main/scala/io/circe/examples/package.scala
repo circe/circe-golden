@@ -121,3 +121,15 @@ object MyTuple {
   implicit def decodeMyTuple[A, B](implicit A: Decoder[A], B: Decoder[B]): Decoder[MyTuple[A, B]] =
     Decoder[(A, B)].map(MyTuple(_))
 }
+
+object WithInnerClass {
+  case class MyInner(i: Int)
+
+  object MyInner {
+    implicit val eqMyInner: Eq[MyInner] = Eq.fromUniversalEquals
+    implicit val arbitraryMyInner: Arbitrary[MyInner] = Arbitrary(Arbitrary.arbitrary[Int].map(MyInner.apply))
+
+    implicit val encodeMyInner: Encoder[MyInner] = Encoder[Int].contramap(_.i)
+    implicit val decodeMyInner: Decoder[MyInner] = Decoder[Int].map(MyInner.apply)
+  }
+}
