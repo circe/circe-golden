@@ -18,8 +18,7 @@ trait GoldenCodecTests[A] extends CodecTests[A] {
     case Success(equalities) => Prop.all(equalities.map(catsLawsIsEqToProp(_)): _*)
   }
 
-  def goldenCodec(
-    implicit
+  def goldenCodec(implicit
     arbitraryA: Arbitrary[A],
     shrinkA: Shrink[A],
     eqA: Eq[A],
@@ -32,8 +31,7 @@ trait GoldenCodecTests[A] extends CodecTests[A] {
     "encoding golden files" -> tryListToProp(laws.goldenEncoding)
   )
 
-  def unserializableGoldenCodec(
-    implicit
+  def unserializableGoldenCodec(implicit
     arbitraryA: Arbitrary[A],
     shrinkA: Shrink[A],
     eqA: Eq[A],

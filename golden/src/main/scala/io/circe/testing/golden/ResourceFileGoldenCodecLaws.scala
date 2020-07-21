@@ -79,7 +79,7 @@ object ResourceFileGoldenCodecLaws {
     resourcePackage: List[String],
     size: Int,
     count: Int,
-   printer: Printer
+    printer: Printer
   )(implicit decodeA: Decoder[A], encodeA: Encoder[A], arbitraryA: Arbitrary[A]): GoldenCodecLaws[A] =
     new ResourceFileGoldenCodecLaws[A](name, resourceRootDir, resourcePackage, size, count, printer) {
       val decode: Decoder[A] = decodeA
@@ -91,8 +91,8 @@ object ResourceFileGoldenCodecLaws {
     size: Int = 100,
     count: Int = 1,
     printer: Printer = Printer.spaces2
-  )(
-    implicit decodeA: Decoder[A],
+  )(implicit
+    decodeA: Decoder[A],
     encodeA: Encoder[A],
     arbitraryA: Arbitrary[A],
     typeTagA: TypeTag[A]
