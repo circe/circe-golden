@@ -28,19 +28,17 @@ trait GoldenCodecLaws[A] extends CodecLaws[A] {
   protected def goldenExamples: Try[List[(A, String)]]
 
   final def goldenDecoding: Try[List[IsEq[A]]] = goldenExamples.flatMap {
-    _.traverse {
-      case (value, encoded) =>
-        io.circe.parser.decode[A](encoded)(decode) match {
-          case Left(error)    => Failure(error)
-          case Right(decoded) => Success(decoded <-> value)
-        }
+    _.traverse { case (value, encoded) =>
+      io.circe.parser.decode[A](encoded)(decode) match {
+        case Left(error)    => Failure(error)
+        case Right(decoded) => Success(decoded <-> value)
+      }
     }
   }
 
   final def goldenEncoding: Try[List[IsEq[String]]] = goldenExamples.map {
-    _.map {
-      case (value, encoded) =>
-        printJson(encode(value)) <-> encoded
+    _.map { case (value, encoded) =>
+      printJson(encode(value)) <-> encoded
     }
   }
 }
