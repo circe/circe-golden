@@ -20,8 +20,8 @@ abstract class ResourceFileGoldenCodecLaws[A](
     with ExampleGeneration[A] {
 
   private[this] val resourceRootPath: String = "/" + resourcePackage.mkString("/") + "/"
-  private[this] val resourceDir: File = resourcePackage.foldLeft(resourceRootDir) {
-    case (acc, p) => new File(acc, p)
+  private[this] val resourceDir: File = resourcePackage.foldLeft(resourceRootDir) { case (acc, p) =>
+    new File(acc, p)
   }
   private[this] val GoldenFilePattern: Regex = "^-(.{44})\\.json$".r
 
@@ -34,14 +34,13 @@ abstract class ResourceFileGoldenCodecLaws[A](
             case _                       => None
           }
         case _ => None
-      }.toList.traverse[Try, (A, String)] {
-        case (seed, name) =>
-          val contents = Resources.open(resourceRootPath + name).map { source =>
-            val lines = source.getLines.mkString("\n")
-            source.close()
-            lines
-          }
-          (getValueFromBase64Seed(seed), contents).tupled
+      }.toList.traverse[Try, (A, String)] { case (seed, name) =>
+        val contents = Resources.open(resourceRootPath + name).map { source =>
+          val lines = source.getLines.mkString("\n")
+          source.close()
+          lines
+        }
+        (getValueFromBase64Seed(seed), contents).tupled
       }
 
       dirSource.close()
@@ -54,18 +53,17 @@ abstract class ResourceFileGoldenCodecLaws[A](
     }
 
   private[this] def generateGoldenFiles: Try[List[(A, String)]] =
-    generateRandomGoldenExamples(count).traverse {
-      case (seed, value, encoded) =>
-        Try {
-          resourceDir.mkdirs()
-          val file = new File(resourceDir, s"$name-${seed.toBase64}.json")
+    generateRandomGoldenExamples(count).traverse { case (seed, value, encoded) =>
+      Try {
+        resourceDir.mkdirs()
+        val file = new File(resourceDir, s"$name-${seed.toBase64}.json")
 
-          val writer = new PrintWriter(file)
-          writer.print(encoded)
-          writer.close()
+        val writer = new PrintWriter(file)
+        writer.print(encoded)
+        writer.close()
 
-          (value, encoded)
-        }
+        (value, encoded)
+      }
     }
 
   protected lazy val goldenExamples: Try[List[(A, String)]] =
@@ -79,7 +77,7 @@ object ResourceFileGoldenCodecLaws {
     resourcePackage: List[String],
     size: Int,
     count: Int,
-   printer: Printer
+    printer: Printer
   )(implicit decodeA: Decoder[A], encodeA: Encoder[A], arbitraryA: Arbitrary[A]): GoldenCodecLaws[A] =
     new ResourceFileGoldenCodecLaws[A](name, resourceRootDir, resourcePackage, size, count, printer) {
       val decode: Decoder[A] = decodeA
@@ -91,8 +89,8 @@ object ResourceFileGoldenCodecLaws {
     size: Int = 100,
     count: Int = 1,
     printer: Printer = Printer.spaces2
-  )(
-    implicit decodeA: Decoder[A],
+  )(implicit
+    decodeA: Decoder[A],
     encodeA: Encoder[A],
     arbitraryA: Arbitrary[A],
     typeTagA: TypeTag[A]

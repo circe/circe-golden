@@ -26,7 +26,11 @@ trait VisitRepositoryTestInstances extends VisitTestInstances with ArbitraryInst
   )
 }
 
-class OldVisitRepositorySuite extends AnyFlatSpec with FlatSpecDiscipline with Configuration with VisitRepositoryTestInstances {
+class OldVisitRepositorySuite
+    extends AnyFlatSpec
+    with FlatSpecDiscipline
+    with Configuration
+    with VisitRepositoryTestInstances {
   checkAll("Codec[VisitRepository]", CodecTests[VisitRepository].codec)
 
   val good = """{"visits":{"1":{"id":12345,"page":"/index.html","ts":"2019-10-22T14:54:13Z"}}}"""
@@ -44,6 +48,10 @@ class OldVisitRepositorySuite extends AnyFlatSpec with FlatSpecDiscipline with C
 
 import io.circe.testing.golden.GoldenCodecTests
 
-class VisitRepositorySuite extends AnyFlatSpec with FlatSpecDiscipline with Configuration with VisitRepositoryTestInstances {
+class VisitRepositorySuite
+    extends AnyFlatSpec
+    with FlatSpecDiscipline
+    with Configuration
+    with VisitRepositoryTestInstances {
   checkAll("GoldenCodec[VisitRepository]", GoldenCodecTests[VisitRepository](Printer.spaces2SortKeys).goldenCodec)
 }
