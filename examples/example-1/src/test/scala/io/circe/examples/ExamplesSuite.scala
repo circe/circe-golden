@@ -20,4 +20,6 @@ class ExamplesSuite extends AnyFlatSpec with FlatSpecDiscipline with Configurati
     "GoldenCodec[MyTuple[MyList[Wub], MyList[MyList[Foo]]]]",
     GoldenCodecTests[MyTuple[MyList[Wub], MyList[MyList[Foo]]]].goldenCodec
   )
+
+  checkAll("GoldenCodec[MyInner]", GoldenCodecTests[WithInnerClass.MyInner].goldenCodec)
 }
