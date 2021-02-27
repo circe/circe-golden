@@ -89,7 +89,7 @@ lazy val example1 = project
     libraryDependencies ++= Seq(
       "io.circe" %% "circe-core" % circeVersion,
       "org.scalacheck" %% "scalacheck" % "1.15.3",
-      "org.typelevel" %%% "discipline-scalatest" % "2.1.1" % Test
+      "org.typelevel" %%% "discipline-scalatest" % "2.1.2" % Test
     )
   )
   .settings(noPublishSettings)
