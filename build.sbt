@@ -72,7 +72,7 @@ lazy val golden = crossProject(JSPlatform, JVMPlatform)
       "io.circe" %%% "circe-parser" % circeVersion,
       "io.circe" %%% "circe-testing" % circeVersion,
       "io.circe" %%% "circe-generic" % circeVersion % Test,
-      "org.typelevel" %%% "discipline-scalatest" % "2.1.1" % Test,
+      "org.typelevel" %%% "discipline-scalatest" % "2.1.3" % Test,
       scalaOrganization.value % "scala-reflect" % scalaVersion.value % Provided
     ),
     ghpagesNoJekyll := true,
@@ -89,7 +89,7 @@ lazy val example1 = project
     libraryDependencies ++= Seq(
       "io.circe" %% "circe-core" % circeVersion,
       "org.scalacheck" %% "scalacheck" % "1.15.3",
-      "org.typelevel" %%% "discipline-scalatest" % "2.1.1" % Test
+      "org.typelevel" %%% "discipline-scalatest" % "2.1.3" % Test
     )
   )
   .settings(noPublishSettings)
