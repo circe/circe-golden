@@ -1,6 +1,23 @@
 import sbtcrossproject.{ CrossType, crossProject }
 
 ThisBuild / organization := "io.circe"
+ThisBuild / crossScalaVersions := Seq("2.12.14", "2.13.6")
+ThisBuild / githubWorkflowJavaVersions := Seq("adopt@1.8")
+ThisBuild / githubWorkflowPublishTargetBranches := Nil
+ThisBuild / githubWorkflowBuild := Seq(
+  WorkflowStep.Sbt(
+    List("clean", "coverage", "test", "coverageReport", "scalafmtCheckAll"),
+    id = None,
+    name = Some("Test")
+  ),
+  WorkflowStep.Use(
+    UseRef.Public(
+      "codecov",
+      "codecov-action",
+      "v1"
+    )
+  )
+)
 
 val compilerOptions = Seq(
   "-deprecation",
