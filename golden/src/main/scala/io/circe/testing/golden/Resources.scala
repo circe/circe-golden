@@ -11,8 +11,7 @@ import scala.util.Try
 object Resources {
 
   /**
-   * Attempt to guess the test resource root directory for the current project, creating it if it
-   * does not exist.
+   * Attempt to guess the test resource root directory for the current project, creating it if it does not exist.
    */
   lazy val inferRootDir: File = {
     var current = new File(getClass.getResource("/").toURI)
