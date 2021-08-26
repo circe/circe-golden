@@ -12,8 +12,8 @@ trait GoldenCodecLaws[A] extends CodecLaws[A] {
   /**
    * Printer used to serialize a [[Json]] value as a string.
    *
-   * We use `spaces2` by default because it provides useful diffs and human-readable examples, but
-   * you can override if space or some other consideration is a priority.
+   * We use `spaces2` by default because it provides useful diffs and human-readable examples, but you can override if
+   * space or some other consideration is a priority.
    */
   protected def printer: Printer = Printer.spaces2
 
@@ -22,8 +22,8 @@ trait GoldenCodecLaws[A] extends CodecLaws[A] {
   /**
    * A list of pairs of values and their JSON encodings serialized to strings (or an error).
    *
-   * We use `Try` in order to provide better error messages in tests in the case that golden file
-   * resources are unavailable or misconfigured.
+   * We use `Try` in order to provide better error messages in tests in the case that golden file resources are
+   * unavailable or misconfigured.
    */
   protected def goldenExamples: Try[List[(A, String)]]
 
