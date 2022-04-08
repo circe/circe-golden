@@ -105,7 +105,7 @@ lazy val example1 = project
   .settings(
     libraryDependencies ++= Seq(
       "io.circe" %% "circe-core" % circeVersion,
-      "org.scalacheck" %% "scalacheck" % "1.15.4",
+      "org.scalacheck" %% "scalacheck" % "1.16.0",
       "org.typelevel" %%% "discipline-scalatest" % "2.1.5" % Test
     )
   )
