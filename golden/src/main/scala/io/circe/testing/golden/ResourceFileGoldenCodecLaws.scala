@@ -1,12 +1,36 @@
+/*
+ * Copyright 2016 circe
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.circe.testing.golden
 
-import cats.instances.list._, cats.instances.try_._
-import cats.syntax.apply._, cats.syntax.traverse._
-import io.circe.{ Decoder, Encoder, Printer }
-import java.io.{ File, PrintWriter }
-import org.scalacheck.{ Arbitrary, Gen }
+import cats.instances.list._
+import cats.instances.try_._
+import cats.syntax.apply._
+import cats.syntax.traverse._
+import io.circe.Decoder
+import io.circe.Encoder
+import io.circe.Printer
+import org.scalacheck.Arbitrary
+import org.scalacheck.Gen
+
+import java.io.File
+import java.io.PrintWriter
 import scala.reflect.runtime.universe.TypeTag
-import scala.util.{ Failure, Try }
+import scala.util.Failure
+import scala.util.Try
 import scala.util.matching.Regex
 
 abstract class ResourceFileGoldenCodecLaws[A](
@@ -27,21 +51,25 @@ abstract class ResourceFileGoldenCodecLaws[A](
 
   private[this] lazy val loadGoldenFiles: Try[List[(A, String)]] =
     Resources.open(resourceRootPath).flatMap { dirSource =>
-      val files = dirSource.getLines.flatMap {
-        case fileName if fileName.startsWith(name) =>
-          fileName.drop(name.length) match {
-            case GoldenFilePattern(seed) => Some((seed, fileName))
-            case _                       => None
-          }
-        case _ => None
-      }.toList.traverse[Try, (A, String)] { case (seed, name) =>
-        val contents = Resources.open(resourceRootPath + name).map { source =>
-          val lines = source.getLines.mkString("\n")
-          source.close()
-          lines
+      val files = dirSource
+        .getLines()
+        .flatMap {
+          case fileName if fileName.startsWith(name) =>
+            fileName.drop(name.length) match {
+              case GoldenFilePattern(seed) => Some((seed, fileName))
+              case _                       => None
+            }
+          case _ => None
         }
-        (getValueFromBase64Seed(seed), contents).tupled
-      }
+        .toList
+        .traverse[Try, (A, String)] { case (seed, name) =>
+          val contents = Resources.open(resourceRootPath + name).map { source =>
+            val lines = source.getLines().mkString("\n")
+            source.close()
+            lines
+          }
+          (getValueFromBase64Seed(seed), contents).tupled
+        }
 
       dirSource.close()
 
