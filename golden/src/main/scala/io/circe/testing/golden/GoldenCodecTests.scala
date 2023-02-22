@@ -37,7 +37,7 @@ import scala.util.Try
 trait GoldenCodecTests[A] extends CodecTests[A] {
   def laws: GoldenCodecLaws[A]
 
-  private[this] def tryListToProp[A: Eq](result: Try[List[IsEq[A]]]): Prop = result match {
+  private[this] def tryListToProp[T: Eq](result: Try[List[IsEq[T]]]): Prop = result match {
     case Failure(error)      => Prop.exception(error)
     case Success(equalities) => Prop.all(equalities.map(catsLawsIsEqToProp(_)): _*)
   }
