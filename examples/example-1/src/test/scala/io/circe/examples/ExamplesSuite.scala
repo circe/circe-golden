@@ -16,7 +16,6 @@
 
 package io.circe.examples
 
-import cats.instances.list._
 import io.circe.testing.golden._
 import io.circe.testing.instances._
 import org.scalatest.flatspec.AnyFlatSpec

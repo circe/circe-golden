@@ -51,21 +51,25 @@ abstract class ResourceFileGoldenCodecLaws[A](
 
   private[this] lazy val loadGoldenFiles: Try[List[(A, String)]] =
     Resources.open(resourceRootPath).flatMap { dirSource =>
-      val files = dirSource.getLines.flatMap {
-        case fileName if fileName.startsWith(name) =>
-          fileName.drop(name.length) match {
-            case GoldenFilePattern(seed) => Some((seed, fileName))
-            case _                       => None
-          }
-        case _ => None
-      }.toList.traverse[Try, (A, String)] { case (seed, name) =>
-        val contents = Resources.open(resourceRootPath + name).map { source =>
-          val lines = source.getLines.mkString("\n")
-          source.close()
-          lines
+      val files = dirSource
+        .getLines()
+        .flatMap {
+          case fileName if fileName.startsWith(name) =>
+            fileName.drop(name.length) match {
+              case GoldenFilePattern(seed) => Some((seed, fileName))
+              case _                       => None
+            }
+          case _ => None
         }
-        (getValueFromBase64Seed(seed), contents).tupled
-      }
+        .toList
+        .traverse[Try, (A, String)] { case (seed, name) =>
+          val contents = Resources.open(resourceRootPath + name).map { source =>
+            val lines = source.getLines().mkString("\n")
+            source.close()
+            lines
+          }
+          (getValueFromBase64Seed(seed), contents).tupled
+        }
 
       dirSource.close()
 

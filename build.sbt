@@ -43,7 +43,7 @@ lazy val golden = crossProject(JVMPlatform)
       "io.circe" %%% "circe-generic" % circeVersion % Test,
       "org.typelevel" %%% "discipline-scalatest" % "2.1.5" % Test,
       scalaOrganization.value % "scala-reflect" % scalaVersion.value % Provided
-    ),
+    )
   )
 
 lazy val goldenJVM = golden.jvm

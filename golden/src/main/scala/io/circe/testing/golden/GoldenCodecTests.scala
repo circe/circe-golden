@@ -82,7 +82,7 @@ object GoldenCodecTests {
   def apply[A: Decoder: Encoder: Arbitrary: TypeTag](count: Int, printer: Printer): GoldenCodecTests[A] =
     apply[A](ResourceFileGoldenCodecLaws[A](count = count, printer = printer))
 
-  def apply[A: Decoder: Encoder: Arbitrary](laws0: GoldenCodecLaws[A]): GoldenCodecTests[A] =
+  def apply[A](laws0: GoldenCodecLaws[A]): GoldenCodecTests[A] =
     new GoldenCodecTests[A] {
       val laws: GoldenCodecLaws[A] = laws0
     }
