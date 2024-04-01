@@ -1,31 +1,16 @@
-import sbtcrossproject.{ CrossType, crossProject }
-
-ThisBuild / tlBaseVersion := "0.14"
-ThisBuild / circeRootOfCodeCoverage := None
+ThisBuild / tlBaseVersion := "0.4"
+ThisBuild / description := "Yet another Typesafe Config decoder"
+ThisBuild / circeRootOfCodeCoverage := Some("golden")
 ThisBuild / startYear := Some(2016)
-ThisBuild / scalafixScalaBinaryVersion := "2.12"
-ThisBuild / githubWorkflowBuildMatrixFailFast := Some(false)
 
-ThisBuild / crossScalaVersions := Seq("2.12.15", "2.13.7")
+val scala212 = "2.12.18"
+val scala213 = "2.13.11"
+ThisBuild / scalaVersion := scala213
+ThisBuild / crossScalaVersions := Seq(scala212, scala213)
 
 val circeVersion = "0.14.1"
-
-def priorTo2_13(scalaVersion: String): Boolean =
-  CrossVersion.partialVersion(scalaVersion) match {
-    case Some((2, minor)) if minor < 13 => true
-    case _                              => false
-  }
-
-val baseSettings = Seq(
-  resolvers += "jitpack".at("https://jitpack.io"),
-  Compile / console / scalacOptions ~= {
-    _.filterNot(Set("-Ywarn-unused-import", "-Ywarn-unused:imports"))
-  },
-  Test / console / scalacOptions ~= {
-    _.filterNot(Set("-Ywarn-unused-import", "-Ywarn-unused:imports"))
-  },
-  coverageHighlighting := true
-)
+val scalacheckVersion = "1.15.4"
+val disciplineScalatestVersion = "2.1.5"
 
 val root = tlCrossRootProject.aggregate(golden, example1)
 
@@ -33,7 +18,6 @@ lazy val golden = crossProject(JVMPlatform)
   .withoutSuffixFor(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("golden"))
-  .settings(baseSettings)
   .settings(
     moduleName := "circe-golden",
     libraryDependencies ++= Seq(
@@ -41,7 +25,7 @@ lazy val golden = crossProject(JVMPlatform)
       "io.circe" %%% "circe-parser" % circeVersion,
       "io.circe" %%% "circe-testing" % circeVersion,
       "io.circe" %%% "circe-generic" % circeVersion % Test,
-      "org.typelevel" %%% "discipline-scalatest" % "2.1.5" % Test,
+      "org.typelevel" %%% "discipline-scalatest" % disciplineScalatestVersion % Test,
       scalaOrganization.value % "scala-reflect" % scalaVersion.value % Provided
     )
   )
@@ -53,8 +37,8 @@ lazy val example1 = project
   .settings(
     libraryDependencies ++= Seq(
       "io.circe" %% "circe-core" % circeVersion,
-      "org.scalacheck" %% "scalacheck" % "1.15.4",
-      "org.typelevel" %%% "discipline-scalatest" % "2.1.5" % Test
+      "org.scalacheck" %% "scalacheck" % scalacheckVersion,
+      "org.typelevel" %%% "discipline-scalatest" % disciplineScalatestVersion % Test
     )
   )
   .enablePlugins(NoPublishPlugin)
@@ -66,5 +50,6 @@ ThisBuild / developers := List(
     "Travis Brown",
     "travisrobertbrown@gmail.com",
     url("https://twitter.com/travisbrown")
-  )
+  ),
+  Developer("zarthross", "Darren Gibson", "zarthross@gmail.com", url("https://twitter.com/zarthross"))
 )
