@@ -1,6 +1,6 @@
 ThisBuild / tlBaseVersion := "0.4"
 ThisBuild / description := "Yet another Typesafe Config decoder"
-ThisBuild / circeRootOfCodeCoverage := Some("golden")
+ThisBuild / circeRootOfCodeCoverage := None
 ThisBuild / startYear := Some(2016)
 
 val scala212 = "2.12.19"
