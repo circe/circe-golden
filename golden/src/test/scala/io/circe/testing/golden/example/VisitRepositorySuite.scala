@@ -55,7 +55,7 @@ class OldVisitRepositorySuite
   val value = VisitRepository(Map("1" -> Visit(12345L, "/index.html", Instant.parse("2019-10-22T14:54:13Z"))))
 
   "codecForVisitRepository" should "decode JSON that's known to be good" in {
-    assert(io.circe.jawn.decode[VisitRepository](good) === Right(value))
+    assert(io.circe.parser.decode[VisitRepository](good) === Right(value))
   }
 
   it should "produce the expected results" in {

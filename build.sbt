@@ -9,18 +9,19 @@ ThisBuild / scalaVersion := scala213
 ThisBuild / crossScalaVersions := Seq(scala212, scala213)
 
 val circeVersion = "0.14.1"
-val scalacheckVersion = "1.15.4"
-val disciplineScalatestVersion = "2.1.5"
+val scalacheckVersion = "1.17.0"
+val disciplineScalatestVersion = "2.2.0"
+val scalacheckScalaTestVersion = "3.2.18.0"
 
 val root = tlCrossRootProject.aggregate(golden, example1)
 
 lazy val golden = crossProject(JVMPlatform)
-  .withoutSuffixFor(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("golden"))
   .settings(
     moduleName := "circe-golden",
     libraryDependencies ++= Seq(
+      "org.scalatestplus" %%% "scalacheck-1-17" % scalacheckScalaTestVersion,
       "io.circe" %%% "circe-core" % circeVersion,
       "io.circe" %%% "circe-parser" % circeVersion,
       "io.circe" %%% "circe-testing" % circeVersion,
@@ -31,9 +32,8 @@ lazy val golden = crossProject(JVMPlatform)
     )
   )
 
-lazy val goldenJVM = golden.jvm
-
-lazy val example1 = project
+lazy val example1 = crossProject(JVMPlatform)
+  .crossType(CrossType.Pure)
   .in(file("examples/example-1"))
   .settings(
     libraryDependencies ++= Seq(
@@ -43,7 +43,7 @@ lazy val example1 = project
     )
   )
   .enablePlugins(NoPublishPlugin)
-  .dependsOn(goldenJVM % Test)
+  .dependsOn(golden % Test)
 
 ThisBuild / developers := List(
   Developer(
@@ -52,5 +52,10 @@ ThisBuild / developers := List(
     "travisrobertbrown@gmail.com",
     url("https://twitter.com/travisbrown")
   ),
-  Developer("zarthross", "Darren Gibson", "zarthross@gmail.com", url("https://twitter.com/zarthross"))
+  Developer(
+    "zarthross",
+    "Darren Gibson",
+    "zarthross@gmail.com",
+    url("https://twitter.com/zarthross")
+  )
 )
