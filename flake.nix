@@ -17,9 +17,9 @@
           imports = [ typelevel-nix.typelevelShell ];
           name = "circe-golden";
           typelevelShell = {
-            jdk.package = pkgs.jdk8;
-            native.enable = true;
-            nodejs.enable = true;
+            jdk.package = pkgs.jdk11;
+            native.enable = false;
+            nodejs.enable = false;
           };
         };
       });
