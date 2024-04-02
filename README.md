@@ -87,7 +87,7 @@ class VisitSuite extends AnyFlatSpec with FlatSpecDiscipline with VisitTestInsta
   val value = Visit(12345L, "/index.html", Instant.parse("2019-10-22T14:54:13Z"))
 
   "codecForVisit" should "decode JSON that's known to be good" in {
-    assert(io.circe.jawn.decode[Visit](good) === Right(value))
+    assert(io.circe.parser.decode[Visit](good) === Right(value))
   }
 
   it should "produce the expected results" in {
