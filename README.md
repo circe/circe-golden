@@ -135,7 +135,7 @@ by [hspec-golden-aeson][golden-aeson].
 Add the dependency to your sbt build:
 
 ```scala
-libraryDependencies += "io.circe" %% "circe-golden" % "0.1.0" % Test
+libraryDependencies += "io.circe" %% "circe-golden" % "0.4.0" % Test
 ```
 
 Change all of your `CodecTests` laws-checking tests to `GoldenCodecTests` with `goldenCodec`,
