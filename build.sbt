@@ -10,7 +10,7 @@ ThisBuild / crossScalaVersions := Seq(scala212, scala213)
 
 val circeVersion = "0.14.6"
 val scalacheckVersion = "1.17.0"
-val disciplineScalatestVersion = "2.2.0"
+val disciplineScalatestVersion = "2.3.0"
 val scalacheckScalaTestVersion = "3.2.18.0"
 
 val root = tlCrossRootProject.aggregate(golden, example1)
