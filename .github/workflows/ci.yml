@@ -28,15 +28,21 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.12, 2.13]
+        scala: [2.12, 2.13, 3]
         java: [temurin@11, temurin@17]
         project: [rootJVM]
         exclude:
           - scala: 2.12
             java: temurin@17
+          - scala: 3
+            java: temurin@17
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
+      - name: Install sbt
+        if: contains(runner.os, 'macos')
+        run: brew install sbt
+
       - name: Checkout current branch (full)
         uses: actions/checkout@v4
         with:
@@ -115,6 +121,10 @@ jobs:
         java: [temurin@11]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Install sbt
+        if: contains(runner.os, 'macos')
+        run: brew install sbt
+
       - name: Checkout current branch (full)
         uses: actions/checkout@v4
         with:
@@ -166,6 +176,16 @@ jobs:
           tar xf targets.tar
           rm targets.tar
 
+      - name: Download target directories (3, rootJVM)
+        uses: actions/download-artifact@v4
+        with:
+          name: target-${{ matrix.os }}-${{ matrix.java }}-3-rootJVM
+
+      - name: Inflate target directories (3, rootJVM)
+        run: |
+          tar xf targets.tar
+          rm targets.tar
+
       - name: Import signing key
         if: env.PGP_SECRET != '' && env.PGP_PASSPHRASE == ''
         env:
@@ -199,6 +219,10 @@ jobs:
         java: [temurin@11]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Install sbt
+        if: contains(runner.os, 'macos')
+        run: brew install sbt
+
       - name: Checkout current branch (full)
         uses: actions/checkout@v4
         with:
@@ -233,5 +257,5 @@ jobs:
       - name: Submit Dependencies
         uses: scalacenter/sbt-dependency-submission@v2
         with:
-          modules-ignore: rootjs_2.12 rootjs_2.13 rootjvm_2.12 rootjvm_2.13 rootnative_2.12 rootnative_2.13 example1_2.12 example1_2.13
+          modules-ignore: rootjs_2.12 rootjs_2.13 rootjs_3 rootjvm_2.12 rootjvm_2.13 rootjvm_3 rootnative_2.12 rootnative_2.13 rootnative_3 example1_2.12 example1_2.13 example1_3
           configs-ignore: test scala-tool scala-doc-tool test-internal

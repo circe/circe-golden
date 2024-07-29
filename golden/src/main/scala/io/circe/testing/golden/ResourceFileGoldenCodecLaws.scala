@@ -28,7 +28,6 @@ import org.scalacheck.Gen
 
 import java.io.File
 import java.io.PrintWriter
-import scala.reflect.runtime.universe.TypeTag
 import scala.util.Failure
 import scala.util.Try
 import scala.util.matching.Regex
@@ -98,7 +97,7 @@ abstract class ResourceFileGoldenCodecLaws[A](
     loadGoldenFiles.flatMap(fs => if (fs.isEmpty) generateGoldenFiles else loadGoldenFiles)
 }
 
-object ResourceFileGoldenCodecLaws {
+object ResourceFileGoldenCodecLaws extends ResourceFileGoldenCodecLawsCompanion {
   def apply[A](
     name: String,
     resourceRootDir: File,
@@ -112,16 +111,4 @@ object ResourceFileGoldenCodecLaws {
       val encode: Encoder[A] = encodeA
       val gen: Gen[A] = arbitraryA.arbitrary
     }
-
-  def apply[A](
-    size: Int = 100,
-    count: Int = 1,
-    printer: Printer = Printer.spaces2
-  )(implicit
-    decodeA: Decoder[A],
-    encodeA: Encoder[A],
-    arbitraryA: Arbitrary[A],
-    typeTagA: TypeTag[A]
-  ): GoldenCodecLaws[A] =
-    apply[A](Resources.inferName[A], Resources.inferRootDir, Resources.inferPackage[A], size, count, printer)
 }

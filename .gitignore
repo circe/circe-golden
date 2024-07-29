@@ -10,3 +10,7 @@ target/
 .classpath
 tmp/
 .bsp/
+.metals/
+.vscode/
+.jvm/
+*.semanticdb
