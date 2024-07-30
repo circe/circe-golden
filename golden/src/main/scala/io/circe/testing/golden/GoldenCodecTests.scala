@@ -20,16 +20,12 @@ import cats.instances.string._
 import cats.kernel.Eq
 import cats.laws.IsEq
 import cats.laws.discipline.catsLawsIsEqToProp
-import io.circe.Decoder
-import io.circe.Encoder
 import io.circe.Json
-import io.circe.Printer
 import io.circe.testing.CodecTests
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop
 import org.scalacheck.Shrink
 
-import scala.reflect.runtime.universe.TypeTag
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
@@ -69,20 +65,11 @@ trait GoldenCodecTests[A] extends CodecTests[A] {
   )
 }
 
-object GoldenCodecTests {
-  def apply[A: Decoder: Encoder: Arbitrary: TypeTag]: GoldenCodecTests[A] =
-    apply[A](ResourceFileGoldenCodecLaws[A]())
+object GoldenCodecTests extends GoldenCodecTestsCompanion {
 
-  def apply[A: Decoder: Encoder: Arbitrary: TypeTag](printer: Printer): GoldenCodecTests[A] =
-    apply[A](ResourceFileGoldenCodecLaws[A](printer = printer))
-
-  def apply[A: Decoder: Encoder: Arbitrary: TypeTag](count: Int): GoldenCodecTests[A] =
-    apply[A](ResourceFileGoldenCodecLaws[A](count = count))
-
-  def apply[A: Decoder: Encoder: Arbitrary: TypeTag](count: Int, printer: Printer): GoldenCodecTests[A] =
-    apply[A](ResourceFileGoldenCodecLaws[A](count = count, printer = printer))
-
-  def apply[A](laws0: GoldenCodecLaws[A]): GoldenCodecTests[A] =
+  // for binary compat
+  protected def apply[A](laws0: GoldenCodecLaws[A]): GoldenCodecTests[A] = fromLaws(laws0)
+  def fromLaws[A](laws0: GoldenCodecLaws[A]): GoldenCodecTests[A] =
     new GoldenCodecTests[A] {
       val laws: GoldenCodecLaws[A] = laws0
     }

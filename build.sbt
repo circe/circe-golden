@@ -1,17 +1,18 @@
-ThisBuild / tlBaseVersion := "0.4"
-ThisBuild / description := "Yet another Typesafe Config decoder"
+ThisBuild / tlBaseVersion := "0.5"
+ThisBuild / description := "Circe Golden Testing"
 ThisBuild / circeRootOfCodeCoverage := None
 ThisBuild / startYear := Some(2016)
 
 val scala212 = "2.12.19"
-val scala213 = "2.13.11"
+val scala213 = "2.13.14"
+val scala3 = "3.3.3"
 ThisBuild / scalaVersion := scala213
-ThisBuild / crossScalaVersions := Seq(scala212, scala213)
+ThisBuild / crossScalaVersions := Seq(scala212, scala213, scala3)
 
-val circeVersion = "0.14.6"
-val scalacheckVersion = "1.17.0"
-val disciplineScalatestVersion = "2.2.0"
-val scalacheckScalaTestVersion = "3.2.18.0"
+val circeVersion = "0.14.9"
+val scalacheckVersion = "1.18.0"
+val disciplineScalatestVersion = "2.3.0"
+val scalacheckScalaTestVersion = "3.2.19.0"
 
 val root = tlCrossRootProject.aggregate(golden, example1)
 
@@ -21,15 +22,23 @@ lazy val golden = crossProject(JVMPlatform)
   .settings(
     moduleName := "circe-golden",
     libraryDependencies ++= Seq(
-      "org.scalatestplus" %%% "scalacheck-1-17" % scalacheckScalaTestVersion,
+      "org.scalatestplus" %%% "scalacheck-1-18" % scalacheckScalaTestVersion,
       "io.circe" %%% "circe-core" % circeVersion,
       "io.circe" %%% "circe-parser" % circeVersion,
       "io.circe" %%% "circe-testing" % circeVersion,
       "io.circe" %%% "circe-generic" % circeVersion % Test,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion,
-      "org.typelevel" %%% "discipline-scalatest" % disciplineScalatestVersion % Test,
-      scalaOrganization.value % "scala-reflect" % scalaVersion.value % Provided
-    )
+      "org.typelevel" %%% "discipline-scalatest" % disciplineScalatestVersion % Test
+    ),
+    libraryDependencies ++= {
+      if (tlIsScala3.value) Nil
+      else
+        Seq(
+          scalaOrganization.value % "scala-reflect" % scalaVersion.value % Provided
+        )
+    },
+    Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
+    tlVersionIntroduced := List("2.13", "2.12", "3").map(_ -> "0.5.0").toMap
   )
 
 lazy val example1 = crossProject(JVMPlatform)
@@ -37,7 +46,7 @@ lazy val example1 = crossProject(JVMPlatform)
   .in(file("examples/example-1"))
   .settings(
     libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core" % circeVersion,
+      "io.circe" %%% "circe-core" % circeVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion,
       "org.typelevel" %%% "discipline-scalatest" % disciplineScalatestVersion % Test
     )
@@ -46,16 +55,16 @@ lazy val example1 = crossProject(JVMPlatform)
   .dependsOn(golden % Test)
 
 ThisBuild / developers := List(
-  Developer(
+  tlGitHubDev(
     "travisbrown",
-    "Travis Brown",
-    "travisrobertbrown@gmail.com",
-    url("https://twitter.com/travisbrown")
+    "Travis Brown"
   ),
-  Developer(
+  tlGitHubDev(
     "zarthross",
-    "Darren Gibson",
-    "zarthross@gmail.com",
-    url("https://twitter.com/zarthross")
+    "Darren Gibson"
+  ),
+  tlGitHubDev(
+    "hamnis",
+    "Erlend Hamnaberg"
   )
 )
