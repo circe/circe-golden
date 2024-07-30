@@ -46,6 +46,8 @@ lazy val example1 = crossProject(JVMPlatform)
   .in(file("examples/example-1"))
   .settings(
     libraryDependencies ++= Seq(
+      "io.circe" %%% "circe-core" % circeVersion,
+      "org.scalacheck" %% "scalacheck" % scalacheckVersion,
       "org.typelevel" %%% "discipline-scalatest" % disciplineScalatestVersion % Test
     )
   )
