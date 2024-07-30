@@ -1,5 +1,5 @@
-ThisBuild / tlBaseVersion := "0.4"
-ThisBuild / description := "Yet another Typesafe Config decoder"
+ThisBuild / tlBaseVersion := "0.5"
+ThisBuild / description := "Circe Golden Testing"
 ThisBuild / circeRootOfCodeCoverage := None
 ThisBuild / startYear := Some(2016)
 
@@ -38,7 +38,7 @@ lazy val golden = crossProject(JVMPlatform)
         )
     },
     Test / classLoaderLayeringStrategy := ClassLoaderLayeringStrategy.Flat,
-    tlVersionIntroduced := Map("2.13" -> "0.14.0", "2.12" -> "0.4.0", "3" -> "0.4.1")
+    tlVersionIntroduced := List("2.13", "2.12", "3").map(_ -> "0.5.0").toMap
   )
 
 lazy val example1 = crossProject(JVMPlatform)
@@ -46,8 +46,6 @@ lazy val example1 = crossProject(JVMPlatform)
   .in(file("examples/example-1"))
   .settings(
     libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core" % circeVersion,
-      "org.scalacheck" %% "scalacheck" % scalacheckVersion,
       "org.typelevel" %%% "discipline-scalatest" % disciplineScalatestVersion % Test
     )
   )
@@ -55,16 +53,16 @@ lazy val example1 = crossProject(JVMPlatform)
   .dependsOn(golden % Test)
 
 ThisBuild / developers := List(
-  Developer(
+  tlGitHubDev(
     "travisbrown",
-    "Travis Brown",
-    "travisrobertbrown@gmail.com",
-    url("https://twitter.com/travisbrown")
+    "Travis Brown"
   ),
-  Developer(
+  tlGitHubDev(
     "zarthross",
-    "Darren Gibson",
-    "zarthross@gmail.com",
-    url("https://twitter.com/zarthross")
+    "Darren Gibson"
+  ),
+  tlGitHubDev(
+    "hamnis",
+    "Erlend Hamnaberg"
   )
 )
