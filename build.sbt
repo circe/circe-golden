@@ -9,7 +9,7 @@ val scala3 = "3.3.8"
 ThisBuild / scalaVersion := scala213
 ThisBuild / crossScalaVersions := Seq(scala212, scala213, scala3)
 
-val circeVersion = "0.14.16"
+val circeVersion = "0.14.17"
 val scalacheckVersion = "1.20.0"
 val disciplineScalatestVersion = "2.3.0"
 val scalacheckScalaTestVersion = "3.2.20.0"
